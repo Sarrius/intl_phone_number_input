@@ -67,7 +67,7 @@ class _Flag extends StatelessWidget {
             child: useEmoji!
                 ? Text(
                     Utils.generateFlagEmojiUnicode(country?.alpha2Code ?? ''),
-                    style: Theme.of(context).textTheme.headlineLarge,
+                    style: Theme.of(context).textTheme.headlineSmall,
                   )
                 : Image.asset(
                     country!.flagUri,
