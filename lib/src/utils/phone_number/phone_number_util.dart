@@ -1,5 +1,6 @@
 import 'package:intl_phone_number_input/src/utils/phone_number.dart';
-import 'package:libphonenumber_plugin/libphonenumber_plugin.dart' as p;
+import 'package:phone_numbers_parser/phone_numbers_parser.dart' as p;
+import 'package:libphonenumber_plugin/libphonenumber_plugin.dart' as l;
 
 /// A wrapper class [PhoneNumberUtil] that basically switch between plugin available for `Web` or `Android or IOS` and `Other platforms` when available.
 class PhoneNumberUtil {
@@ -11,16 +12,18 @@ class PhoneNumberUtil {
     if (phoneNumber.length < 2) {
       return false;
     }
-    return p.PhoneNumberUtil.isValidPhoneNumber(phoneNumber, isoCode);
+    return p.PhoneNumber.parse(phoneNumber, callerCountry: isoCode.iso)
+        .isValid();
   }
 
   /// [normalizePhoneNumber] normalizes a string of characters representing a phone number
   /// Accepts [phoneNumber] and [isoCode]
   /// Returns [Future<String>]
-  static Future<String?> normalizePhoneNumber(
-      {required String phoneNumber, required String isoCode}) async {
-    return p.PhoneNumberUtil.normalizePhoneNumber(phoneNumber, isoCode);
-  }
+  static Future<String?> normalizePhoneNumber({
+    required String phoneNumber,
+    required String isoCode,
+  }) async =>
+      p.PhoneNumber.parse(phoneNumber, callerCountry: isoCode.iso).normalize();
 
   /// Accepts [phoneNumber] and [isoCode]
   /// Returns [Future<RegionInfo>] of all information available about the [phoneNumber]
@@ -146,6 +149,15 @@ extension phonenumbertypeproperties on PhoneNumberType {
         return 10;
       default:
         return -1;
+    }
+  }
+}
+
+extension StringIsoCodeExtension on String {
+  p.IsoCode get iso {
+    switch (this) {
+      case 'AC':
+        return p.IsoCode.AC;
     }
   }
 }
